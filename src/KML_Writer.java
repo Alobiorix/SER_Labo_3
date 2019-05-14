@@ -10,7 +10,7 @@ import java.io.File;
 public class KML_Writer {
 
     final Document document = new Document();
-    document.addContent(xml_root);
+    /*document.addContent(xml_root);
     StreamResult sortie = new StreamResult(new File("src/geo_kml.kml"));
     JDOMSource source = new JDOMSource(document);
     TransformerFactory transformerFactory = TransformerFactory.newInstance();
@@ -18,5 +18,5 @@ public class KML_Writer {
 
     transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 
-    transformer.transform(source, sortie);
+    transformer.transform(source, sortie);*/
 }
