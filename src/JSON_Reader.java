@@ -1,11 +1,22 @@
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Iterator;
 
+import org.jdom2.transform.JDOMSource;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+
+import java.io.*;
+import org.jdom2.*;
+import org.jdom2.output.*;
+
+import javax.xml.transform.*;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
 public class JSON_Reader {
 
     public static void main(String[] args) {
@@ -13,17 +24,18 @@ public class JSON_Reader {
         //JSON parser object pour lire le fichier
         JSONParser jsonParser = new JSONParser();
 
-        try (FileReader reader = new FileReader("src/jsonFile.json")) {
 
-            // lecture du fichier
-            Object obj = jsonParser.parse(reader);
+        try (FileReader reader = new FileReader("countries.geojson")) {
 
-            JSONArray personne = (JSONArray) obj;
-            System.out.println(personne);
-
-            // parcours du tableau de personnes
-            personne.forEach(pers->parsePersonneObject((JSONObject)pers));
-
+            JSONObject jsonObject = (JSONObject) jsonParser.parse(reader);
+            Element xml_root = new Element((String) jsonObject.get("type"));
+            JSONArray features = (JSONArray) jsonObject.get("features");
+            Iterator<JSONObject> iterator = features.iterator();
+            while (iterator.hasNext()){
+                JSONObject inType = iterator.next();
+                xml_root.addContent(new Element((String) inType.get("type")));
+                xml_root.addContent(new Element())
+            }
         }
 
         catch (FileNotFoundException e) {
@@ -34,22 +46,10 @@ public class JSON_Reader {
         }
         catch (ParseException e) {
             e.printStackTrace();
+        } catch (TransformerConfigurationException e) {
+            e.printStackTrace();
+        } catch (TransformerException e) {
+            e.printStackTrace();
         }
-    }
-
-    private static void parsePersonneObject(JSONObject pers) {
-
-        // Obtenir l'objet personne dans la liste
-        JSONObject persObject = (JSONObject) pers.get("personne");
-
-        // obtenir les détails ...
-        String nom    = (String) persObject.get("nom");
-        String prenom = (String) persObject.get("prenom");
-        String email  = (String) persObject.get("email");
-
-        // afficher le contenu
-        System.out.println(nom);
-        System.out.println(prenom);
-        System.out.println(email);
     }
 }
