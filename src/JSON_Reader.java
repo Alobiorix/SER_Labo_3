@@ -3,7 +3,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Iterator;
 
-import org.jdom2.transform.JDOMSource;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -11,11 +10,7 @@ import org.json.simple.parser.ParseException;
 
 import java.io.*;
 import org.jdom2.*;
-import org.jdom2.output.*;
 
-import javax.xml.transform.*;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 public class JSON_Reader {
 
@@ -34,7 +29,7 @@ public class JSON_Reader {
             while (iterator.hasNext()){
                 JSONObject inType = iterator.next();
                 xml_root.addContent(new Element((String) inType.get("type")));
-                xml_root.addContent(new Element())
+                //xml_root.addContent(new Element())
             }
         }
 
@@ -45,10 +40,6 @@ public class JSON_Reader {
             e.printStackTrace();
         }
         catch (ParseException e) {
-            e.printStackTrace();
-        } catch (TransformerConfigurationException e) {
-            e.printStackTrace();
-        } catch (TransformerException e) {
             e.printStackTrace();
         }
     }
