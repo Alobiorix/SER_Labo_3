@@ -18,47 +18,40 @@ public class KML_Writer {
 
     KML_Writer(ArrayList<Country> countries){
         try {
-            Element kml = new Element("kml", "http://www.opengis.net/kml/2.2");
-            document.setRootElement(kml);
-            Element placemark = new Element("Placemark");
-            placemark.addContent(new Element("name").setText(countries.iterator().next().getName()));
-            placemark.addContent(new Element("code").setText(countries.iterator().next().getCode()));
-            Element polygon = new Element("Polygon");
-            placemark.addContent(polygon);
-            polygon.addContent(new Element("altitudeMode").setText("relativeToGround"));
-            Element outerBoundaryIs = new Element("outerBoundaryIs");
-            polygon.addContent(outerBoundaryIs);
-            Element linearRing = new Element("LinearRing");
-            outerBoundaryIs.addContent(linearRing);
-            Element coordinates = new Element("coordinates");
-            linearRing.addContent(coordinates);
-            for(int i = 0; i < countries.iterator().next().getBoundary().size(); i++) {
-                for(int j = 0; j < countries.iterator().next().getBoundary().get(i).getPolygone().size(); j++){
-                    coordinates.addContent(countries.iterator().next().getBoundary().get(i).getPolygone().get(j).toString());
+            Element kml = new Element("Document");
+            document.addContent(kml);
+            Element style = new Element("Style");
+            style.setAttribute("id","style");
+            Element lineStyle = new Element("LineStyle");
+            style.addContent(lineStyle);
+            lineStyle.addContent(new Element("color").setText("ffffffff"));
+            lineStyle.addContent(new Element("width").setText("3"));
+            Element polyStyle = new Element("PolyStyle");
+            style.addContent(polyStyle);
+            polyStyle.addContent(new Element("fill").setText("0"));
+            kml.addContent(style);
+
+            for(Country country : countries) {
+                Element placemark = new Element("Placemark");
+                placemark.addContent(new Element("name").setText(country.getName()));
+                placemark.addContent(new Element("code").setText(country.getCode()));
+                placemark.addContent(new Element("styleUrl").setText("style"));
+                Element polygon = new Element("Polygon");
+                placemark.addContent(polygon);
+                Element outerBoundaryIs = new Element("outerBoundaryIs");
+                polygon.addContent(outerBoundaryIs);
+                Element linearRing = new Element("LinearRing");
+                outerBoundaryIs.addContent(linearRing);
+                Element coordinates = new Element("coordinates");
+                linearRing.addContent(coordinates);
+                for (int i = 0; i < country.getBoundary().size(); i++) {
+                    for (int j = 0; j < country.getBoundary().get(i).getPolygone().size(); j++) {
+                        coordinates.addContent(country.getBoundary().get(i).getPolygone().get(j).toString());
+                    }
                 }
-
+                kml.addContent(placemark);
             }
-
-
-            kml.addContent(placemark);
-
-            /*
-            <extrude>1</extrude>
-            <outerBoundaryIs>
-                <LinearRing>
-                    <coordinates>
-                        -77.05788457660967,38.87253259892824,100
-                        -77.05465973756702,38.87291016281703,100
-                        -77.05315536854791,38.87053267794386,100
-                        -77.05552622493516,38.868757801256,100
-                        -77.05844056290393,38.86996206506943,100
-                        -77.05788457660967,38.87253259892824,100
-                      </coordinates>
-                    </LinearRing>
-                  </outerBoundaryIs>*/
-
-
-
+            
             StreamResult sortie = new StreamResult(new File("src/geo_kml.kml"));
             JDOMSource source = new JDOMSource(document);
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
