@@ -99,5 +99,7 @@ public class JSON_Reader {
         catch (ParseException e) {
             e.printStackTrace();
         }
+
+        KML_Writer kml_writer = new KML_Writer();
     }
 }
