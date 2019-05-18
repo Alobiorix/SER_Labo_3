@@ -11,7 +11,7 @@ import org.json.simple.parser.ParseException;
 
 public class JSON_Reader {
 
-    private static List<Country> countries = new ArrayList<Country>();
+    private static List<Country> countries = new ArrayList<>();
 
     public static void main(String[] args) {
 
@@ -43,12 +43,16 @@ public class JSON_Reader {
                 //on récupère le tableau de coordonnées
                 JSONArray coordinatesTab = (JSONArray) geometry.get("coordinates");
 
+                List<Coordinate> c = new ArrayList<>();
+
                 //on récupère les coordonnées
-                JSONArray coordinates = (JSONArray) coordinatesTab.get(0);
+                JSONArray coordinates;
+
+                CountryPolygon cp = new CountryPolygon();
 
                 if(geometryType.equals("Polygon"))
                 {
-                    List<Coordinate> c = new ArrayList<>();
+                    coordinates = (JSONArray) coordinatesTab.get(0);
 
                     for(Object coo : coordinates)
                     {
@@ -58,15 +62,27 @@ public class JSON_Reader {
                         c.add(newCoordinate);
                     }
 
-                    CountryPolygon cp = new CountryPolygon(c);
-                    country.addPolygon(cp);
+                    cp = new CountryPolygon(c);
+
                 }
                 else //multipolygon
                 {
+                    for(Object tabCoo : coordinatesTab)
+                    {
+                        coordinates = (JSONArray) ((JSONArray)tabCoo).get(0);
 
+                        for(Object coo : coordinates)
+                        {
+                            Coordinate newCoordinate = new Coordinate(Double.toString((double)((JSONArray)coo).get(0)),
+                                    (Double.toString((double)((JSONArray)coo).get(1))));
+
+                            c.add(newCoordinate);
+                        }
+                        new CountryPolygon(c);
+                    }
                 }
+                country.addPolygon(cp);
                 countries.add(country);
-
             }
             for(Country country : countries)
             {

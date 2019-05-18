@@ -23,8 +23,4 @@ public class CountryPolygon {
         return polygone.size();
     }
 
-    public void addCoordinate(Coordinate newCoordinate) {
-            polygone.add(newCoordinate);
-
-    }
 }

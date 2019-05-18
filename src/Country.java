@@ -32,16 +32,22 @@ public class Country {
         boundary.add(newPolygon);
     }
 
-    public void boundaryString()
+    public String boundaryString(List<CountryPolygon> boundary)
     {
-
+        String s = "";
+        for(CountryPolygon cp : boundary)
+        {
+            s += "\t- " + cp.getPolygoneSize() + " coordinates";
+        }
+        return s;
     }
 
     public String toString()
     {
         return "(" + code + ") "
-                + name + " "
-                + boundary;
+                + name + "\n"
+                + boundaryString(boundary)
+                + "\n";
     }
 }
 
