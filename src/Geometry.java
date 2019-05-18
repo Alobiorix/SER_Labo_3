@@ -4,9 +4,9 @@ import java.util.List;
 public class Geometry {
 
     private String type;
-    private List<Double> coordinates = new ArrayList();
+    private List<Coordinate> coordinates = new ArrayList<Coordinate>();
 
-    Geometry(String type, ArrayList<Double> coordinates){
+    Geometry(String type, ArrayList<Coordinate> coordinates){
         this.type = type;
         this.coordinates = coordinates;
     }
@@ -15,7 +15,7 @@ public class Geometry {
         return type;
     }
 
-    public List<Double> getCoordinates() {
+    public List<Coordinate> getCoordinates() {
         return coordinates;
     }
 }

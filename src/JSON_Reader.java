@@ -1,35 +1,81 @@
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import java.io.*;
-import org.jdom2.*;
-
-
 public class JSON_Reader {
+
+    private static List<Country> countries = new ArrayList<Country>();
 
     public static void main(String[] args) {
 
         //JSON parser object pour lire le fichier
         JSONParser jsonParser = new JSONParser();
 
-
         try (FileReader reader = new FileReader("countries.geojson")) {
 
             JSONObject jsonObject = (JSONObject) jsonParser.parse(reader);
-            Element xml_root = new Element((String) jsonObject.get("type"));
+
+            //On parcourt les features
             JSONArray features = (JSONArray) jsonObject.get("features");
-            Iterator<JSONObject> iterator = features.iterator();
-            while (iterator.hasNext()){
-                JSONObject inType = iterator.next();
-                xml_root.addContent(new Element((String) inType.get("type")));
-                //xml_root.addContent(new Element())
+
+            for (Object feature : features) {
+                JSONObject properties = (JSONObject) ((JSONObject) feature).get("properties");
+
+                //On récupère le nom et le code du pays.
+                String  countryName = (String) properties.get("ADMIN"),
+                        countryIso = (String) properties.get("ISO_A3");
+
+                Country country = new Country(countryIso, countryName);
+
+                //On récupère l'objet geometry + coordonnées
+                JSONObject geometry = (JSONObject) ((JSONObject) feature).get("geometry");
+
+                //On récupère le type de polygone du pays
+                String geometryType =  (String) geometry.get("type");
+
+                //on récupère le tableau de coordonnées
+                JSONArray coordinatesTab = (JSONArray) geometry.get("coordinates");
+
+                //on récupère les coordonnées
+                JSONArray coordinates = (JSONArray) coordinatesTab.get(0);
+
+                if(geometryType.equals("Polygon"))
+                {
+                    List<Coordinate> c = new ArrayList<>();
+
+                    for(Object coo : coordinates)
+                    {
+                        Coordinate newCoordinate = new Coordinate(Double.toString((double)((JSONArray)coo).get(0)),
+                        (Double.toString((double)((JSONArray)coo).get(1))));
+
+                        c.add(newCoordinate);
+                    }
+
+                    CountryPolygon cp = new CountryPolygon(c);
+                    country.addPolygon(cp);
+                }
+                else //multipolygon
+                {
+                    for(int i = 0; i < coordinatesTab.size(); ++i)
+                    {
+                        CountryPolygon cp = new CountryPolygon();
+
+                        for(Object c2 : coordinates)
+                        {
+                            cp.addCoordinate((Coordinate)c2);
+                        }
+                    }
+                }
+                countries.add(country);
+
+
             }
         }
 

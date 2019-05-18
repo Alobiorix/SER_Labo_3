@@ -15,8 +15,6 @@ public class KML_Writer {
     JDOMSource source = new JDOMSource(document);
     TransformerFactory transformerFactory = TransformerFactory.newInstance();
     Transformer transformer = transformerFactory.newTransformer();
-
     transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-
     transformer.transform(source, sortie);*/
 }

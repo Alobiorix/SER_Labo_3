@@ -1,4 +1,5 @@
-public class Type {
+public class Type
+{
 
     private String type;
     private Properties properties;
