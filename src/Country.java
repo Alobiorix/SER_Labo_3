@@ -32,6 +32,11 @@ public class Country {
         boundary.add(newPolygon);
     }
 
+    public void boundaryString()
+    {
+
+    }
+
     public String toString()
     {
         return "(" + code + ") "

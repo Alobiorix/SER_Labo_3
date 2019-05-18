@@ -63,19 +63,14 @@ public class JSON_Reader {
                 }
                 else //multipolygon
                 {
-                    for(int i = 0; i < coordinatesTab.size(); ++i)
-                    {
-                        CountryPolygon cp = new CountryPolygon();
 
-                        for(Object c2 : coordinates)
-                        {
-                            cp.addCoordinate((Coordinate)c2);
-                        }
-                    }
                 }
                 countries.add(country);
 
-
+            }
+            for(Country country : countries)
+            {
+                System.out.println(country);
             }
         }
 
