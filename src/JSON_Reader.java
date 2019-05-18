@@ -15,24 +15,20 @@ public class JSON_Reader {
 
     public static void main(String[] args) {
 
-        //JSON parser object pour lire le fichier
         JSONParser jsonParser = new JSONParser();
 
+        //On essaye de lire le fichier geojson
         try (FileReader reader = new FileReader("countries.geojson")) {
 
             JSONObject jsonObject = (JSONObject) jsonParser.parse(reader);
 
             //On parcourt les features
             JSONArray features = (JSONArray) jsonObject.get("features");
-
             for (Object feature : features) {
                 JSONObject properties = (JSONObject) ((JSONObject) feature).get("properties");
 
-                //On récupère le nom et le code du pays.
-                String  countryName = (String) properties.get("ADMIN"),
-                        countryIso = (String) properties.get("ISO_A3");
-
-                Country country = new Country(countryIso, countryName);
+                //On récupère le nom et le code du pays
+                Country country = new Country((String) properties.get("ISO_A3"), (String) properties.get("ADMIN"));
 
                 //On récupère l'objet geometry + coordonnées
                 JSONObject geometry = (JSONObject) ((JSONObject) feature).get("geometry");
@@ -43,51 +39,56 @@ public class JSON_Reader {
                 //on récupère le tableau de coordonnées
                 JSONArray coordinatesTab = (JSONArray) geometry.get("coordinates");
 
-                List<Coordinate> c = new ArrayList<>();
-
                 //on récupère les coordonnées
                 JSONArray coordinates;
+                List<Coordinate> c = new ArrayList<>();
 
+                if(geometryType.equals("MultiPolygon"))
+                {
+                    //On parcourt le tableau de coordonnées
+                    for(Object tabCoo : coordinatesTab)
+                    {
+                        //Pour chaque tableau, on créé un polygone différent.
+                        coordinates = (JSONArray) ((JSONArray)tabCoo).get(0);
+                        CountryPolygon cp = new CountryPolygon();
+                        c = new ArrayList<>();
 
+                        //On parcourt les coordonnées et on les ajoute dans
+                        //leur polygone correspondant.
+                        for(Object coordinate : coordinates)
+                        {
+                            Coordinate newCoordinate =
+                                    new Coordinate( Double.toString((double)((JSONArray)coordinate).get(0)),
+                                            Double.toString((double)((JSONArray)coordinate).get(1)));
 
-                if(geometryType.equals("Polygon"))
+                            c.add(newCoordinate);
+                            cp = new CountryPolygon(c);
+                        }
+                        //on ajoute le polygone au pays correspondant.
+                        country.addPolygon(cp);
+                    }
+                }
+                //Concerne : les pays qui ne contiennent pas plusieurs polygones
+                else
                 {
                     coordinates = (JSONArray) coordinatesTab.get(0);
 
+                    //On parcourt simplement les coordonnées et on les met dans un polygone.
                     for(Object coo : coordinates)
                     {
                         Coordinate newCoordinate = new Coordinate(Double.toString((double)((JSONArray)coo).get(0)),
-                        (Double.toString((double)((JSONArray)coo).get(1))));
+                                (Double.toString((double)((JSONArray)coo).get(1))));
 
                         c.add(newCoordinate);
                     }
 
                     CountryPolygon cp = new CountryPolygon(c);
                     country.addPolygon(cp);
-
-                }
-                else //multipolygon
-                {
-                    for(Object tabCoo : coordinatesTab)
-                    {
-                        coordinates = (JSONArray) ((JSONArray)tabCoo).get(0);
-                        CountryPolygon cp = new CountryPolygon();
-                        c = new ArrayList<>();
-
-                        for(Object coordinate : coordinates)
-                        {
-                            Coordinate newCoordinate =
-                                    new Coordinate( Double.toString((double)((JSONArray)coordinate).get(0)),
-                                                    Double.toString((double)((JSONArray)coordinate).get(1)));
-
-                            c.add(newCoordinate);
-                            cp = new CountryPolygon(c);
-                        }
-                        country.addPolygon(cp);
-                    }
                 }
                 countries.add(country);
             }
+
+            //on affiche les différents pays avec leurs données.
             for(Country country : countries)
             {
                 System.out.println(country);
