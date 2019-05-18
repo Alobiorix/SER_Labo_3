@@ -93,7 +93,6 @@ public class JSON_Reader {
                 System.out.println(country);
             }
         }
-
         catch (FileNotFoundException e) {
             e.printStackTrace();
         }
