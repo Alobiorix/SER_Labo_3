@@ -8,14 +8,6 @@ public class Coordinate {
         y = newY;
     }
 
-    public String getX() {
-        return x;
-    }
-
-    public String getY() {
-        return y;
-    }
-
     public String toString()
     {
         return x + ", " + y;
