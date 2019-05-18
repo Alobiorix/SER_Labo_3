@@ -37,7 +37,7 @@ public class Country {
         String s = "";
         for(CountryPolygon cp : boundary)
         {
-            s += "\t- " + cp.getPolygoneSize() + " coordinates";
+            s += "\t- " + cp.getPolygoneSize() + " coordinates" + "\n";
         }
         return s;
     }
@@ -46,8 +46,6 @@ public class Country {
     {
         return "(" + code + ") "
                 + name + "\n"
-                + boundaryString(boundary)
-                + "\n";
+                + boundaryString(boundary);
     }
 }
-

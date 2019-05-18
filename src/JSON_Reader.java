@@ -48,7 +48,7 @@ public class JSON_Reader {
                 //on récupère les coordonnées
                 JSONArray coordinates;
 
-                CountryPolygon cp = new CountryPolygon();
+
 
                 if(geometryType.equals("Polygon"))
                 {
@@ -62,7 +62,8 @@ public class JSON_Reader {
                         c.add(newCoordinate);
                     }
 
-                    cp = new CountryPolygon(c);
+                    CountryPolygon cp = new CountryPolygon(c);
+                    country.addPolygon(cp);
 
                 }
                 else //multipolygon
@@ -70,18 +71,21 @@ public class JSON_Reader {
                     for(Object tabCoo : coordinatesTab)
                     {
                         coordinates = (JSONArray) ((JSONArray)tabCoo).get(0);
+                        CountryPolygon cp = new CountryPolygon();
+                        c = new ArrayList<>();
 
-                        for(Object coo : coordinates)
+                        for(Object coordinate : coordinates)
                         {
-                            Coordinate newCoordinate = new Coordinate(Double.toString((double)((JSONArray)coo).get(0)),
-                                    (Double.toString((double)((JSONArray)coo).get(1))));
+                            Coordinate newCoordinate =
+                                    new Coordinate( Double.toString((double)((JSONArray)coordinate).get(0)),
+                                                    Double.toString((double)((JSONArray)coordinate).get(1)));
 
                             c.add(newCoordinate);
+                            cp = new CountryPolygon(c);
                         }
-                        new CountryPolygon(c);
+                        country.addPolygon(cp);
                     }
                 }
-                country.addPolygon(cp);
                 countries.add(country);
             }
             for(Country country : countries)
