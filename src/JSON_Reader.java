@@ -104,6 +104,6 @@ public class JSON_Reader {
             e.printStackTrace();
         }
 
-        KML_Writer kml_writer = new KML_Writer();
+        KML_Writer kml_writer = new KML_Writer((ArrayList<Country>)countries);
     }
 }
